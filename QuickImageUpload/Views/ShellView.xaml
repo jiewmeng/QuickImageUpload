@@ -1,0 +1,72 @@
+﻿<Window x:Class="QuickImageUpload.Views.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:QuickImageUpload.ViewModels"
+        Title="Quick Image Upload" Height="500" Width="360" ResizeMode="NoResize">
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Ctrl" Key="O" Command="{Binding SelectImagesCommand}" />
+        <KeyBinding Modifiers="Ctrl" Key="C" Command="{Binding CopyImageCommand}" />
+        <KeyBinding Modifiers="Ctrl" Key="V" Command="{Binding PasteImageCommand}" />
+    </Window.InputBindings>
+    <Window.Resources>
+        <Image Source="../Images/open.ico" x:Key="OpenIcon" />
+        <Image Source="../Images/copy.ico" x:Key="CopyIcon" />
+        <Image Source="../Images/paste.ico" x:Key="PasteIcon" />
+        <Image Source="../Images/help.ico" x:Key="HelpIcon" />
+        <Image Source="../Images/about.ico" x:Key="AboutIcon" />
+        <Image Source="../Images/exit.ico" x:Key="ExitIcon" />
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20" />
+            <RowDefinition Height="435" />
+            <RowDefinition Height="16" />
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Header="Select images ..." Command="{Binding SelectImagesCommand}" Icon="{StaticResource OpenIcon}" />
+                <MenuItem Header="Help" Icon="{StaticResource HelpIcon}" />
+                <MenuItem Header="About" Command="{Binding AboutCommand}" Icon="{StaticResource AboutIcon}" />
+                <MenuItem Header="Exit" Icon="{StaticResource ExitIcon}" />
+            </MenuItem>
+            <MenuItem Header="Edit">
+                <MenuItem Header="Copy" Command="{Binding CopyImageCommand}" Icon="{StaticResource CopyIcon}" />
+                <MenuItem Header="Paste" Command="{Binding PasteImageCommand}" Icon="{StaticResource PasteIcon}" />
+            </MenuItem>
+        </Menu>
+        
+        <StackPanel Grid.Row="1">
+            <ListBox ItemsSource="{Binding UploadedImages}" Height="435" IsSynchronizedWithCurrentItem="True" AllowDrop="True" Drop="ListBox_Drop">
+                <ListBox.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Copy" Command="{Binding CopyImageCommand}" />
+                        <MenuItem Header="Paste" Command="{Binding PasteImageCommand}" />
+                    </ContextMenu>
+                </ListBox.ContextMenu>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                        <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Image Source="{Binding DirectLink}" MaxHeight="100" MaxWidth="100" Grid.Column="0" />
+                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                <TextBlock Text="{Binding DirectLink}" />
+                                <TextBlock Text="{Binding Link}" />
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            
+        </StackPanel>
+        <TextBlock Text="{Binding Notification}" Grid.Row="2" />
+    </Grid>
+</Window>
