@@ -10,6 +10,6 @@ namespace QuickImageUpload.ViewModels
     {
         public string Link { get; set; }
         public string DirectLink { get; set; }
-        public string Error { get; set; }
+        public Exception Error { get; set; }
     }
 }

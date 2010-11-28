@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using QuickImageUpload.ViewModels;
 using System.Diagnostics;
+using WorkQueueLib;
+using System.Windows.Controls;
 
 namespace QuickImageUpload.Views
 {
@@ -33,13 +35,17 @@ namespace QuickImageUpload.Views
 
         private void ListBoxItem_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
-            // copy image to clipboard
-            ShellViewModel vm = (ShellViewModel)this.DataContext;
-            vm.CopyImageCommand.Execute(null);
-
-            // open link in browser
-            var currImage = (UploadedImage)vm.UploadedImages.CurrentItem;
-            Process.Start(currImage.DirectLink);
+            var item = (WorkItem<string, UploadedImage>)((ListBoxItem)sender).Content;
+            switch (item.Status)
+            {
+                case WorkStatus.Finished:
+                    Process.Start(item.Result.DirectLink);
+                    break;
+                case WorkStatus.Pending:
+                case WorkStatus.Processing:
+                    Process.Start(item.Args);
+                    break;
+            }
         }
     }
 }

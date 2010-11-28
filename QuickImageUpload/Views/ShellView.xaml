@@ -2,6 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:QuickImageUpload.ViewModels"
+        xmlns:conv="clr-namespace:QuickImageUpload.Converters"
+        xmlns:wi="clr-namespace:WorkQueueLib;assembly=WorkQueue"
         Title="Quick Image Upload" Height="500" Width="360" ResizeMode="NoResize">
     <Window.InputBindings>
         <KeyBinding Modifiers="Ctrl" Key="O" Command="{Binding SelectImagesCommand}" />
@@ -15,6 +17,8 @@
         <Image Source="../Images/help.ico" x:Key="HelpIcon" />
         <Image Source="../Images/about.ico" x:Key="AboutIcon" />
         <Image Source="../Images/exit.ico" x:Key="ExitIcon" />
+        <conv:StatusToBrushConverter x:Key="StatusToBrushConverter" />
+        <conv:DebugConverter x:Key="DebugConverter" />
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -36,7 +40,7 @@
         </Menu>
         
         <StackPanel Grid.Row="1">
-            <ListBox ItemsSource="{Binding UploadedImages}" Height="435" IsSynchronizedWithCurrentItem="True" AllowDrop="True" Drop="ListBox_Drop">
+            <ListBox ItemsSource="{Binding UploadQueue}" SelectedItem="{Binding SelectedWorkItem}" Height="435" IsSynchronizedWithCurrentItem="True" AllowDrop="True" Drop="ListBox_Drop" HorizontalContentAlignment="Stretch">
                 <ListBox.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Copy" Command="{Binding CopyImageCommand}" />
@@ -56,12 +60,31 @@
                                 <ColumnDefinition Width="100" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Image Source="{Binding DirectLink}" MaxHeight="100" MaxWidth="100" Grid.Column="0" />
+                            <Image Source="{Binding Args}" MaxHeight="100" MaxWidth="150" Grid.Column="0" />
                             <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                                <TextBlock Text="{Binding DirectLink}" />
-                                <TextBlock Text="{Binding Link}" />
+                                <TextBlock Text="{Binding Status}" Foreground="{Binding Status, Converter={StaticResource StatusToBrushConverter}}" x:Name="txtStatus" />
+                                <ProgressBar Value="{Binding Progress}" Height="10" x:Name="progBar" Visibility="Collapsed" />
+                                <Button Content="Cancel" Command="{Binding CancelCommand}" x:Name="btnCancel" Visibility="Collapsed" />
+                                <TextBlock Text="{Binding Path=Result.DirectLink}" x:Name="txtDirectLink" Visibility="Collapsed" />
+                                <TextBlock Text="{Binding Path=Result.Link}" x:Name="txtLink" Visibility="Collapsed" />
                             </StackPanel>
                         </Grid>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Status}" Value="Pending">
+                                <Setter TargetName="btnCancel" Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Status}" Value="Error">
+                                <Setter TargetName="txtStatus" Property="TextBox.Text" Value="{Binding Path=Result.Error.Message, Converter={StaticResource DebugConverter}}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Status}" Value="Finished">
+                                <Setter TargetName="txtDirectLink" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="txtLink" Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Status}" Value="Processing">
+                                <Setter TargetName="progBar" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="btnCancel" Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
