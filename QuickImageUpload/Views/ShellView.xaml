@@ -8,15 +8,14 @@
     <Window.InputBindings>
         <KeyBinding Modifiers="Ctrl" Key="O" Command="{Binding SelectImagesCommand}" />
         <KeyBinding Modifiers="Ctrl" Key="C" Command="{Binding CopyImageCommand}" />
+        <KeyBinding Gesture="Ctrl+Alt+C" Command="{Binding CopyImageDataCommand}" />
         <KeyBinding Modifiers="Ctrl" Key="V" Command="{Binding PasteImageCommand}" />
     </Window.InputBindings>
     <Window.Resources>
-        <Image Source="../Images/open.ico" x:Key="OpenIcon" />
-        <Image Source="../Images/copy.ico" x:Key="CopyIcon" />
-        <Image Source="../Images/paste.ico" x:Key="PasteIcon" />
-        <Image Source="../Images/help.ico" x:Key="HelpIcon" />
-        <Image Source="../Images/about.ico" x:Key="AboutIcon" />
-        <Image Source="../Images/exit.ico" x:Key="ExitIcon" />
+        <Image Source="../Images/Open.png" x:Key="OpenIcon" />
+        <Image Source="../Images/Copy.png" x:Key="CopyIcon" />
+        <Image Source="../Images/Paste.png" x:Key="PasteIcon" />
+        <Image Source="../Images/About.png" x:Key="AboutIcon" />
         <conv:StatusToBrushConverter x:Key="StatusToBrushConverter" />
         <conv:DebugConverter x:Key="DebugConverter" />
     </Window.Resources>
@@ -28,23 +27,23 @@
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
             <MenuItem Header="File">
-                <MenuItem Header="Select images ..." Command="{Binding SelectImagesCommand}" Icon="{StaticResource OpenIcon}" />
-                <MenuItem Header="Help" Icon="{StaticResource HelpIcon}" />
-                <MenuItem Header="About" Command="{Binding AboutCommand}" Icon="{StaticResource AboutIcon}" />
-                <MenuItem Header="Exit" Icon="{StaticResource ExitIcon}" />
+                <MenuItem Header="Select images ..." InputGestureText="Ctrl+O" Icon="{StaticResource OpenIcon}" Command="{Binding SelectImagesCommand}" />
+                <MenuItem Header="About" Icon="{StaticResource AboutIcon}" Command="{Binding AboutCommand}" />
             </MenuItem>
             <MenuItem Header="Edit">
-                <MenuItem Header="Copy" Command="{Binding CopyImageCommand}" Icon="{StaticResource CopyIcon}" />
-                <MenuItem Header="Paste" Command="{Binding PasteImageCommand}" Icon="{StaticResource PasteIcon}" />
+                <MenuItem Header="Copy Direct Link" InputGestureText="Ctrl+C" Icon="{StaticResource CopyIcon}" Command="{Binding CopyImageCommand}" />
+                <MenuItem Header="Copy Image Data" InputGestureText="Ctrl+Alt+C" Icon="{StaticResource CopyIcon}" Command="{Binding CopyImageDataCommand}" />
+                <MenuItem Header="Paste" InputGestureText="Ctrl+P" Icon="{StaticResource PasteIcon}" Command="{Binding PasteImageCommand}" />
             </MenuItem>
         </Menu>
         
-        <StackPanel Grid.Row="1">
-            <ListBox ItemsSource="{Binding UploadQueue}" SelectedItem="{Binding SelectedWorkItem}" Height="435" IsSynchronizedWithCurrentItem="True" AllowDrop="True" Drop="ListBox_Drop" HorizontalContentAlignment="Stretch">
+        <Canvas Grid.Row="1">
+            <ListBox ItemsSource="{Binding UploadQueue}" SelectedItem="{Binding SelectedWorkItem}" Width="354" Height="452" IsSynchronizedWithCurrentItem="True" AllowDrop="True" Drop="ListBox_Drop" HorizontalContentAlignment="Stretch">
                 <ListBox.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Header="Copy" Command="{Binding CopyImageCommand}" />
-                        <MenuItem Header="Paste" Command="{Binding PasteImageCommand}" />
+                        <MenuItem Header="Copy Direct Link" InputGestureText="Ctrl+C" Icon="{StaticResource CopyIcon}" Command="{Binding CopyImageCommand}" />
+                        <MenuItem Header="Copy Image Data" InputGestureText="Ctrl+Alt+C" Icon="{StaticResource CopyIcon}" Command="{Binding CopyImageDataCommand}" />
+                        <MenuItem Header="Paste" InputGestureText="Ctrl+P" Icon="{StaticResource PasteIcon}" Command="{Binding PasteImageCommand}" />
                     </ContextMenu>
                 </ListBox.ContextMenu>
                 <ListBox.ItemContainerStyle>
@@ -98,9 +97,22 @@
                         </DataTemplate.Triggers>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
+
+                <ListBox.Style>
+                    <Style TargetType="ListBox">
+                        <Setter Property="Background" Value="White" />
+                        <Style.Triggers>
+                            <Trigger Property="HasItems" Value="False">
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="../Images/Usage.gif" AlignmentX="Center" AlignmentY="Center" Stretch="None" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.Style>
             </ListBox>
-            
-        </StackPanel>
-        <TextBlock Text="{Binding Notification}" Grid.Row="2" />
+        </Canvas>
     </Grid>
 </Window>

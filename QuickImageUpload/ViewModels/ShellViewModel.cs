@@ -21,34 +21,19 @@ namespace QuickImageUpload.ViewModels
         #region Fields
         protected RelayCommand _selectImageCommand;
         protected RelayCommand _copyImageCommand;
+        protected RelayCommand _copyImageDataCommand;
         protected RelayCommand _pasteImageCommand;
-        protected Dispatcher _dispatcher;
-        protected string _notification;
         private RelayCommand _aboutCommand; 
         #endregion
 
         #region Properties
-        public string Notification
-        {
-            get { return _notification; }
-            set
-            {
-                _notification = value;
-                RaisePropertyChanged("Notification");
-            }
-        }
-
         public WorkQueue<string, UploadedImage> UploadQueue { get; protected set; }
         public WorkItem<string, UploadedImage> SelectedWorkItem { get; set; } 
         #endregion
 
         public ShellViewModel()
         {
-            _dispatcher = Dispatcher.CurrentDispatcher;
-            Notification = "Please select images to upload or get it from the clipboard";
-
             #region Queued Uploads
-
             Action<BackgroundWorker, DoWorkEventArgs> doWork = (worker, args) => {
                 // get work item from argument
                 var item = (WorkItem<string, UploadedImage>)args.Argument;
@@ -176,20 +161,9 @@ namespace QuickImageUpload.ViewModels
                 {
                     _copyImageCommand = new RelayCommand(() =>
                     {
-                        var dataObj = new DataObject();
                         UploadedImage img = SelectedWorkItem.Result;
                         Clipboard.Clear();
-                        dataObj.SetData(DataFormats.Text, img.DirectLink);
-
-                        BitmapImage bitmapImage = new BitmapImage();
-                        bitmapImage.BeginInit();
-                        bitmapImage.UriSource = new Uri(img.DirectLink);
-                        bitmapImage.EndInit();
-
-                        dataObj.SetData(DataFormats.Bitmap, bitmapImage);
-
-                        Clipboard.SetDataObject(dataObj);
-                        Notification = "Image & Direct Link Copied to Clipboard";
+                        Clipboard.SetText(img.DirectLink);
                     }, () =>
                     {
                         if (SelectedWorkItem != null && SelectedWorkItem.Status == WorkStatus.Finished)
@@ -198,6 +172,30 @@ namespace QuickImageUpload.ViewModels
                     });
                 }
                 return _copyImageCommand;
+            }
+        }
+
+        public ICommand CopyImageDataCommand
+        {
+            get
+            {
+                if (_copyImageDataCommand == null)
+                {
+                    _copyImageDataCommand = new RelayCommand(() =>
+                    {
+                        string imgPath = SelectedWorkItem.Args;
+                        BitmapImage img = new BitmapImage(new Uri(imgPath));
+
+                        Clipboard.Clear();
+                        Clipboard.SetImage(img);
+                    }, () =>
+                    {
+                        if (SelectedWorkItem != null && SelectedWorkItem.Status == WorkStatus.Finished)
+                            return true;
+                        return false;
+                    });
+                }
+                return _copyImageDataCommand;
             }
         }
 

@@ -19,7 +19,7 @@
     <PublishUrl>D:\Projects\QuickImageUpload\Publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateEnabled>false</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
@@ -27,7 +27,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>http://localhost/QuickImageUpload/</UpdateUrl>
-    <ApplicationRevision>5</ApplicationRevision>
+    <ApplicationRevision>7</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -179,21 +179,23 @@
     <Resource Include="Images\Upload.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\about.ico" />
-    <Resource Include="Images\copy.ico" />
-    <Resource Include="Images\paste.ico" />
-    <Resource Include="Images\exit.ico" />
-    <Resource Include="Images\help.ico" />
-    <Resource Include="Images\error.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\open.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\BackgroundWorker\WorkQueue\WorkQueueLib.csproj">
       <Project>{67BB7B8E-0261-45C7-A9B5-AA5699A3C3DC}</Project>
       <Name>WorkQueueLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Usage.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Copy.png" />
+    <Resource Include="Images\Paste.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Open.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\About.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
