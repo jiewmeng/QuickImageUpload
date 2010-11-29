@@ -6,7 +6,7 @@ using System.Windows.Media.Imaging;
 
 namespace QuickImageUpload.ViewModels
 {
-    class UploadedImage
+    public class UploadedImage
     {
         public string Link { get; set; }
         public string DirectLink { get; set; }

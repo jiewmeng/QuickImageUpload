@@ -10,10 +10,11 @@ namespace QuickImageUpload.Views
 {
     public partial class ShellView : Window
     {
+        protected ShellViewModel _vm;
         public ShellView()
         {
             InitializeComponent();
-            this.DataContext = new ShellViewModel();
+            this.DataContext = _vm = new ShellViewModel();
         }
 
         private void ListBox_Drop(object sender, DragEventArgs e)
@@ -26,10 +27,10 @@ namespace QuickImageUpload.Views
                 var images = from img in files
                              where imageFormats.Contains(System.IO.Path.GetExtension(img).Substring(1).ToLower())
                              select img;
-                Parallel.ForEach(images, img =>
-                {
-                    Task.Factory.StartNew(() => vm.UploadImage(img));
-                });
+                foreach (string img in images) {
+                    _vm.UploadQueue.AddWork(new WorkItem<string, UploadedImage>(img));
+                }
+                _vm.UploadQueue.DoNext();
             }
         }
 

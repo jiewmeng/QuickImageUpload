@@ -64,7 +64,11 @@
                             <StackPanel Grid.Column="1" Margin="10,0,0,0">
                                 <TextBlock Text="{Binding Status}" Foreground="{Binding Status, Converter={StaticResource StatusToBrushConverter}}" x:Name="txtStatus" />
                                 <ProgressBar Value="{Binding Progress}" Height="10" x:Name="progBar" Visibility="Collapsed" />
-                                <Button Content="Cancel" Command="{Binding CancelCommand}" x:Name="btnCancel" Visibility="Collapsed" />
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="Cancel" Command="{Binding CancelCommand}" x:Name="btnCancel" Visibility="Collapsed" />
+                                    <Button Content="Retry" Command="{Binding RetryCommand}" x:Name="btnRetry" Visibility="Collapsed" />
+                                    <Button Content="Remove" Command="{Binding RemoveCommand}" x:Name="btnRemove" Visibility="Collapsed" />
+                                </StackPanel>
                                 <TextBlock Text="{Binding Path=Result.DirectLink}" x:Name="txtDirectLink" Visibility="Collapsed" />
                                 <TextBlock Text="{Binding Path=Result.Link}" x:Name="txtLink" Visibility="Collapsed" />
                             </StackPanel>
@@ -73,12 +77,19 @@
                             <DataTrigger Binding="{Binding Status}" Value="Pending">
                                 <Setter TargetName="btnCancel" Property="Visibility" Value="Visible" />
                             </DataTrigger>
+                            <DataTrigger Binding="{Binding Status}" Value="Cancelled">
+                                <Setter TargetName="btnRetry" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="btnRemove" Property="Visibility" Value="Visible" />
+                            </DataTrigger>
                             <DataTrigger Binding="{Binding Status}" Value="Error">
                                 <Setter TargetName="txtStatus" Property="TextBox.Text" Value="{Binding Path=Result.Error.Message, Converter={StaticResource DebugConverter}}" />
+                                <Setter TargetName="btnRetry" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="btnRemove" Property="Visibility" Value="Visible" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Status}" Value="Finished">
                                 <Setter TargetName="txtDirectLink" Property="Visibility" Value="Visible" />
                                 <Setter TargetName="txtLink" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="btnRemove" Property="Visibility" Value="Visible" />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding Status}" Value="Processing">
                                 <Setter TargetName="progBar" Property="Visibility" Value="Visible" />
